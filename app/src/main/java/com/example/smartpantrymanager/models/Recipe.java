@@ -16,10 +16,9 @@ public class Recipe {
     }
 
     // Creation of the Constructor without the ID (SQLite to handle ID creation)
-    public Recipe(String title, String instructions, List<String> ingredients) {
+    public Recipe(String title, String instructions) {
         this.title = title;
         this.instructions = instructions;
-        this.ingredients = ingredients;
     }
 
     // Creation of the Ful Constructor

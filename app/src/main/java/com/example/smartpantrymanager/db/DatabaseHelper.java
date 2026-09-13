@@ -1,9 +1,21 @@
 // Preparing the data Storage using chosen method as SQLite
 package com.example.smartpantrymanager.db;
 
+// Package Imports
+
+import com.example.smartpantrymanager.models.Ingredient;
+import com.example.smartpantrymanager.models.Recipe;
+
+// Other Imports
+
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.content.ContentValues;
+import android.database.Cursor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -11,7 +23,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "pantry_manager.db";
 
     // Setting the Database Versin
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     // Setting the Table Names, ingredients, recipes, recipe_ingredients
     public static final String TABLE_INGREDIENTS = "ingredients";
@@ -33,6 +45,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     //Setting the Columns for Recipe-Ingredients Table (Relationship Table)
     public static final String COLUMN_RI_RECIPE_ID = "recipe_id";
     public static final String COLUMN_RI_INGREDIENT_NAME = "ingredient_name";
+    public static final String COLUMN_RI_INGREDIENT_ID = "ingredient_id";
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -57,8 +70,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String CREATE_RI_TABLE = "CREATE TABLE " + TABLE_RECIPE_INGREDIENTS + " ("
                 + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + COLUMN_RI_RECIPE_ID + " INTEGER NOT NULL, "
-                + COLUMN_RI_INGREDIENT_NAME + " TEXT NOT NULL, "
-                + "FOREIGN KEY(" + COLUMN_RI_RECIPE_ID + ") REFERENCES " + TABLE_RECIPES + "(" + COLUMN_ID + ") ON DELETE CASCADE);";
+                + COLUMN_RI_INGREDIENT_ID + " INTEGER NOT NULL, "
+                + "FOREIGN KEY(" + COLUMN_RI_RECIPE_ID + ") REFERENCES " + TABLE_RECIPES + "(" + COLUMN_ID + ") ON DELETE CASCADE, "
+                + "FOREIGN KEY(" + COLUMN_RI_INGREDIENT_ID + ") REFERENCES " + TABLE_INGREDIENTS + "(" + COLUMN_ID + ") ON DELETE CASCADE);";
 
         // Executing the Table Creation Statements
         db.execSQL(CREATE_INGREDIENTS_TABLE);
@@ -85,4 +99,167 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // Set Foreign Key Constraints to ensure for Data Integrity
         db.setForeignKeyConstraintsEnabled(true);
     }
+
+    // Crud Operations for Ingredients
+    // Inserting a new ingredient
+    public long addIngredient(Ingredient ingredient) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(COLUMN_INGREDIENT_NAME, ingredient.getName());
+        values.put(COLUMN_INGREDIENT_QTY, ingredient.getQuantity());
+        values.put(COLUMN_INGREDIENT_UNIT, ingredient.getUnit());
+
+        long id = db.insert(TABLE_INGREDIENTS, null, values);
+        db.close();
+        return id; // Returning the id of the inserted or otherwise -1 for errors
+    }
+
+    // Getting ingredients from the database
+    public List<Ingredient> getAllIngredients() {
+        List<Ingredient> ingredientList = new ArrayList<>();
+        String selectQuery = "SELECT * FROM " + TABLE_INGREDIENTS + " ORDER BY " + COLUMN_INGREDIENT_NAME + " ASC";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                long id = cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_ID));
+                String name = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_INGREDIENT_NAME));
+                double quantity = cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_INGREDIENT_QTY));
+                String unit = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_INGREDIENT_UNIT));
+
+                Ingredient ingredient = new Ingredient(id, name, quantity, unit);
+                ingredientList.add(ingredient);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+        return ingredientList;
+    }
+
+    //Updating the details of an ingredient
+    public int updateIngredient(Ingredient ingredient) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(COLUMN_INGREDIENT_NAME, ingredient.getName());
+        values.put(COLUMN_INGREDIENT_QTY, ingredient.getQuantity());
+        values.put(COLUMN_INGREDIENT_UNIT, ingredient.getUnit());
+
+        int rowsAffected = db.update(
+                TABLE_INGREDIENTS,
+                values,
+                COLUMN_ID + " = ?",
+                new String[]{String.valueOf(ingredient.getId())}
+        );
+        db.close();
+        return rowsAffected;
+    }
+
+    // Deletion of an ingredient based on its ID
+    public void deleteIngredient(long id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(
+                TABLE_INGREDIENTS,
+                COLUMN_ID + " = ?",
+                new String[]{String.valueOf(id)}
+        );
+        db.close();
+    }
+
+
+    // Implementation of CRUD logic for Recipes
+    // Inserting new Recipe and linking ingredients
+    public long addRecipe(Recipe recipe, List<Long> ingredientIds) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        long recipeId = -1;
+
+        db.beginTransaction();
+        try {
+            ContentValues values = new ContentValues();
+            values.put(COLUMN_RECIPE_NAME, recipe.getTitle());
+            values.put(COLUMN_RECIPE_INSTRUCTIONS, recipe.getInstructions());
+
+            recipeId = db.insert(TABLE_RECIPES, null, values);
+
+            if (recipeId != -1 && ingredientIds != null) {
+                for (Long ingredientId : ingredientIds) {
+                    ContentValues linkValues = new ContentValues();
+                    linkValues.put(COLUMN_RI_RECIPE_ID, recipeId);
+                    linkValues.put(COLUMN_RI_INGREDIENT_ID, ingredientId);
+                    db.insert(TABLE_RECIPE_INGREDIENTS, null, linkValues);
+                }
+            }
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+            db.close();
+        }
+
+        return recipeId;
+    }
+
+    //Getting all Recipes including with associated ingredients
+    public List<Recipe> getAllRecipes() {
+        List<Recipe> recipeList = new ArrayList<>();
+        String selectQuery = "SELECT * FROM " + TABLE_RECIPES + " ORDER BY " + COLUMN_RECIPE_NAME + " ASC";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                long id = cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_ID));
+                String title = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_RECIPE_NAME));
+                String instructions = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_RECIPE_INSTRUCTIONS));
+
+                // Get ingredient list for this recipe
+                List<String> ingredients = getIngredientsForRecipe(db, id);
+
+                Recipe recipe = new Recipe(id, title, instructions, ingredients);
+                recipeList.add(recipe);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+        return recipeList;
+    }
+
+    // A Junction table used for ingredients linked to recipe ID
+    private List<String> getIngredientsForRecipe(SQLiteDatabase db, long recipeId) {
+        List<String> ingredientNames = new ArrayList<>();
+
+        // JOIN recipe_ingredients with ingredients table to fetch the real names
+        String query = "SELECT i." + COLUMN_INGREDIENT_NAME +
+                " FROM " + TABLE_INGREDIENTS + " i " +
+                " INNER JOIN " + TABLE_RECIPE_INGREDIENTS + " ri " +
+                " ON i." + COLUMN_ID + " = ri." + COLUMN_RI_INGREDIENT_ID +
+                " WHERE ri." + COLUMN_RI_RECIPE_ID + " = ?";
+
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(recipeId)});
+
+        if (cursor.moveToFirst()) {
+            do {
+                String name = cursor.getString(0);
+                ingredientNames.add(name);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return ingredientNames;
+    }
+
+    // Removal of a recipe cascade-deletion of ingredient links
+    public void deleteRecipe(long recipeId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        // Foreign key constraints will automatically delete linked recipe_ingredients rows
+        db.delete(
+                TABLE_RECIPES,
+                COLUMN_ID + " = ?",
+                new String[]{String.valueOf(recipeId)}
+        );
+        db.close();
+    }
+
 }
