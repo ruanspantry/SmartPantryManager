@@ -159,14 +159,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     // Deletion of an ingredient based on its ID
-    public void deleteIngredient(long id) {
+    public boolean deleteIngredient(long id) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(
+        int rowsDeleted = db.delete(
                 TABLE_INGREDIENTS,
                 COLUMN_ID + " = ?",
                 new String[]{String.valueOf(id)}
         );
         db.close();
+        return rowsDeleted > 0;
     }
 
 
@@ -251,15 +252,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     // Removal of a recipe cascade-deletion of ingredient links
-    public void deleteRecipe(long recipeId) {
+    public boolean deleteRecipe(long recipeId) {
         SQLiteDatabase db = this.getWritableDatabase();
         // Foreign key constraints will automatically delete linked recipe_ingredients rows
-        db.delete(
+        int rowsDeleted = db.delete(
                 TABLE_RECIPES,
                 COLUMN_ID + " = ?",
                 new String[]{String.valueOf(recipeId)}
         );
         db.close();
+        return rowsDeleted > 0;
     }
 
 }
