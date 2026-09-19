@@ -9,11 +9,14 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import android.content.Intent;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.smartpantrymanager.R;
 import com.example.smartpantrymanager.models.Ingredient;
+import com.example.smartpantrymanager.EditIngredientActivity;
 
 import java.util.List;
 
@@ -57,6 +60,13 @@ public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.In
             if (deleteListener != null) { //Check not null
                 deleteListener.onDeleteClick(ingredient);
             }
+        });
+
+        // Inside onBindViewHolder of your IngredientAdapter:
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(v.getContext(), EditIngredientActivity.class);
+            intent.putExtra("EXTRA_INGREDIENT", ingredient);
+            v.getContext().startActivity(intent);
         });
     }
 

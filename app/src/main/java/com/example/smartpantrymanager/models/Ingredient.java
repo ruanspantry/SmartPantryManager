@@ -1,7 +1,9 @@
 package com.example.smartpantrymanager.models;
 
+import java.io.Serializable;
+
 // Class meant to represent a single ingredient entry that is stored in the pantry db
-public class Ingredient {
+public class Ingredient implements Serializable {
 
     private long id;
     private String name;

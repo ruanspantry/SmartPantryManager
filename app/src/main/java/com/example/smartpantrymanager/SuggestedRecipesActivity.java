@@ -88,12 +88,13 @@ public class SuggestedRecipesActivity extends AppCompatActivity {
                 int itemId = item.getItemId();
                 if (itemId == R.id.nav_pantry) {
                     startActivity(new Intent(SuggestedRecipesActivity.this, MainActivity.class));
-                    finish(); // Closing the activity maintaining clean stack
+                    finish(); // Closing the activity maintaining clean
                     return true;
                 } else if (itemId == R.id.nav_suggested) {
                     return true; // Already on Suggested screen
                 } else if (itemId == R.id.nav_settings) {
-                    Toast.makeText(SuggestedRecipesActivity.this, "Settings screen coming next!", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(SuggestedRecipesActivity.this, SettingsActivity.class));
+                    finish();
                     return true;
                 }
                 return false;

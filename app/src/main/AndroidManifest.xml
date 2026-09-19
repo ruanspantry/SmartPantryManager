@@ -31,6 +31,13 @@
         <activity
             android:name=".SuggestedRecipesActivity"
             android:exported="false" />
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".EditIngredientActivity"
+            android:label="Edit Ingredient"
+            android:parentActivityName=".MainActivity" />
     </application>
 
 </manifest>
