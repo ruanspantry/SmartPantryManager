@@ -264,4 +264,37 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return rowsDeleted > 0;
     }
 
+    // Retrieving the recipes that can be made with currently available ingredients in list
+    public List<Recipe> getSuggestedRecipes() {
+        List<Recipe> suggested = new ArrayList<>();
+        List<Recipe> allRecipes = getAllRecipes();
+        List<Ingredient> pantryList = getAllIngredients();
+
+        // Store pantry ingredient names in lowercase for case-insensitive matching
+        List<String> pantryNames = new ArrayList<>();
+        for (Ingredient ing : pantryList) {
+            if (ing.getQuantity() > 0) {
+                pantryNames.add(ing.getName().toLowerCase().trim());
+            }
+        }
+
+        // Looping through
+        for (Recipe recipe : allRecipes) {
+            List<String> required = recipe.getIngredients();
+            if (required != null && !required.isEmpty()) {
+                boolean canMake = true;
+                for (String req : required) {
+                    if (!pantryNames.contains(req.toLowerCase().trim())) {
+                        canMake = false;
+                        break;
+                    }
+                }
+                if (canMake) {
+                    suggested.add(recipe);
+                }
+            }
+        }
+        return suggested;
+    }
+
 }

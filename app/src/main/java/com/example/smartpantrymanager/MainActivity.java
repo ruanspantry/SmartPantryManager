@@ -43,6 +43,26 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, AddEditIngredientActivity.class);
             startActivity(intent);
         });
+
+        // Setup Bottom Navigation Bar listener
+        com.google.android.material.bottomnavigation.BottomNavigationView bottomNav = findViewById(R.id.bottomNavigation);
+        if (bottomNav != null) {
+            bottomNav.setSelectedItemId(R.id.nav_pantry); // Highlighting the Pantry tab as active
+
+            bottomNav.setOnItemSelectedListener(item -> {
+                int itemId = item.getItemId();
+                if (itemId == R.id.nav_pantry) {
+                    return true; // When we are already on Pantry view
+                } else if (itemId == R.id.nav_suggested) {
+                    startActivity(new Intent(MainActivity.this, SuggestedRecipesActivity.class));
+                    return true;
+                } else if (itemId == R.id.nav_settings) {
+                    Toast.makeText(MainActivity.this, "Settings button works.", Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+                return false;
+            });
+        }
     }
 
     //Reloading the items from the database when you go back to the main activity

@@ -20,4 +20,10 @@
     <string name="instructions">Instructions</string>
     <string name="list_of_ingredients">List of ingredients...</string>
     <string name="required_ingredients">Required Ingredients</string>
+    <string name="no_suggested_recipes_found_based_on_your_pantry_ingredients">No suggested recipes found based on your pantry ingredients.</string>
+    <string name="recipes_you_can_make_with_your_available_ingredients">Recipes you can make with your available ingredients:</string>
+    <string name="suggested_recipes">Suggested Recipes</string>
+    <string name="settings">Settings</string>
+    <string name="suggested">Suggested</string>
+    <string name="pantry">Pantry</string>
 </resources>

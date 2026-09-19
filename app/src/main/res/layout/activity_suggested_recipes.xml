@@ -2,64 +2,56 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
-    tools:context=".MainActivity">
+    tools:context=".SuggestedRecipesActivity">
 
     <TextView
-        android:id="@+id/tvIngredientsHeader"
+        android:id="@+id/tvSuggestedHeader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/ingredients"
-        android:textSize="20sp"
+        android:text="@string/suggested_recipes"
+        android:textSize="22sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/btnAddIngredient"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/add"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="@id/tvIngredientsHeader"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/tvIngredientsHeader" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvIngredients"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="16dp"
-        app:layout_constraintBottom_toTopOf="@id/tvRecipesHeader"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvIngredientsHeader" />
-
     <TextView
-        android:id="@+id/tvRecipesHeader"
-        android:layout_width="wrap_content"
+        android:id="@+id/tvSuggestedSubheader"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/recipes"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@id/rvRecipes"
+        android:layout_marginTop="4dp"
+        android:text="@string/recipes_you_can_make_with_your_available_ingredients"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/rvIngredients" />
+        app:layout_constraintTop_toBottomOf="@id/tvSuggestedHeader" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvRecipes"
+        android:id="@+id/rvSuggestedRecipes"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toTopOf="@id/bottomNavigation"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvRecipesHeader" />
+        app:layout_constraintTop_toBottomOf="@id/tvSuggestedSubheader" />
+
+    <TextView
+        android:id="@+id/tvEmptyState"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/no_suggested_recipes_found_based_on_your_pantry_ingredients"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="16sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavigation"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvSuggestedSubheader" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigation"
