@@ -29,6 +29,8 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
     // Host Action Link
     public interface OnRecipeDeleteListener {
         void onDeleteClick(Recipe recipe);
+
+        void onItemClick(Recipe recipe);
     }
 
     // Constructor
@@ -61,6 +63,12 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
         holder.btnDelete.setOnClickListener(v -> {
             if (deleteListener != null) {
                 deleteListener.onDeleteClick(recipe);
+            }
+        });
+
+        holder.itemView.setOnClickListener(v -> {
+            if (deleteListener != null) {
+                deleteListener.onItemClick(recipe);
             }
         });
     }

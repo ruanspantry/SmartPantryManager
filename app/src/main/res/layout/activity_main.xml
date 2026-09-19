@@ -12,11 +12,21 @@
         android:id="@+id/tvIngredientsHeader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Ingredients"
+        android:text="@string/ingredients"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btnAddIngredient"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/add"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@id/tvIngredientsHeader"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tvIngredientsHeader" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvIngredients"
@@ -33,7 +43,7 @@
         android:id="@+id/tvRecipesHeader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Recipes"
+        android:text="@string/recipes"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@id/rvRecipes"

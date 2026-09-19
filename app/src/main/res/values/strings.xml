@@ -7,4 +7,17 @@
     <string name="delete_recipe">Delete Recipe</string>
     <string name="ingredients_flour_sugar_eggs">Ingredients: Flour, Sugar, Eggs</string>
     <string name="instructions_step_by_step">Instructions step by step...</string>
+    <string name="add_ingredient">Add Ingredient</string>
+    <string name="ingredient_name_e_g_milk">Ingredient Name (e.g. Milk)</string>
+    <string name="quantity_e_g_1_5">Quantity (e.g. 1.5)</string>
+    <string name="unit_e_g_kg_l_pcs">Unit (e.g. kg, L, pcs)</string>
+    <string name="save_ingredient">Save Ingredient</string>
+    <string name="ingredients">Ingredients</string>
+    <string name="recipes">Recipes</string>
+    <string name="add">+ Add</string>
+    <string name="step_by_step_instructions">Step-by-step instructions...</string>
+    <string name="back_to_pantry">Back to Pantry</string>
+    <string name="instructions">Instructions</string>
+    <string name="list_of_ingredients">List of ingredients...</string>
+    <string name="required_ingredients">Required Ingredients</string>
 </resources>

@@ -1,5 +1,7 @@
 package com.example.smartpantrymanager;
 
+import android.content.Intent;
+
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -12,6 +14,8 @@ import com.example.smartpantrymanager.adapters.RecipeAdapter;
 import com.example.smartpantrymanager.db.DatabaseHelper;
 import com.example.smartpantrymanager.models.Ingredient;
 import com.example.smartpantrymanager.models.Recipe;
+
+import java.util.ArrayList;
 
 import java.util.Arrays;
 import java.util.List;
@@ -30,12 +34,22 @@ public class MainActivity extends AppCompatActivity {
 
         dbHelper = new DatabaseHelper(this);
 
-        // Adding some initial sample date
         seedInitialData();
-
-        //Setting up the UI components
         setupIngredientRecyclerView();
         setupRecipeRecyclerView();
+
+        // Launch AddEditIngredientActivity via Intent
+        findViewById(R.id.btnAddIngredient).setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, AddEditIngredientActivity.class);
+            startActivity(intent);
+        });
+    }
+
+    //Reloading the items from the database when you go back to the main activity
+    @Override
+    protected void onResume() {
+        super.onResume();
+        refreshLists();
     }
 
     private void seedInitialData() {
@@ -78,11 +92,25 @@ public class MainActivity extends AppCompatActivity {
         rvRecipes.setLayoutManager(new LinearLayoutManager(this));
 
         List<Recipe> recipes = dbHelper.getAllRecipes();
-        recipeAdapter = new RecipeAdapter(recipes, recipe -> {
-            boolean deleted = dbHelper.deleteRecipe(recipe.getId());
-            if (deleted) {
-                Toast.makeText(this, recipe.getTitle() + " deleted", Toast.LENGTH_SHORT).show();
-                refreshLists();
+        recipeAdapter = new RecipeAdapter(recipes, new RecipeAdapter.OnRecipeDeleteListener() {
+            @Override
+            public void onDeleteClick(Recipe recipe) {
+                boolean deleted = dbHelper.deleteRecipe(recipe.getId());
+                if (deleted) {
+                    Toast.makeText(MainActivity.this, recipe.getTitle() + " deleted", Toast.LENGTH_SHORT).show();
+                    refreshLists();
+                }
+            }
+
+            @Override
+            public void onItemClick(Recipe recipe) {
+                Intent intent = new Intent(MainActivity.this, RecipeDetailActivity.class);
+                intent.putExtra("EXTRA_RECIPE_TITLE", recipe.getTitle());
+                intent.putExtra("EXTRA_RECIPE_INSTRUCTIONS", recipe.getInstructions());
+                if (recipe.getIngredients() != null) {
+                    intent.putStringArrayListExtra("EXTRA_RECIPE_INGREDIENTS", new ArrayList<>(recipe.getIngredients()));
+                }
+                startActivity(intent);
             }
         });
 
